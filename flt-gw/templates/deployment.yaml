@@ -34,33 +34,48 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: tls
-              mountPath: {{ .Values.tlsConfig.certsPath }}
-              readOnly: true 
             - name: config-map-volume
               mountPath: {{ .Values.configMap.path }}
               readOnly: true
           envFrom:
             - secretRef:
                 name: {{ include "flt-gw.name" . }}-env-secrets  
+{{- if .Values.tlsSecretEnable }}
+          env: 
+            - name: TLS_CERT
+              valueFrom: 
+                secretKeyRef:
+                  name: {{ .Values.tlsSecretName }}
+                  key: tls.crt
+                  optional: false 
+            - name: TLS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.tlsSecretName }}
+                  key: tls.key
+                  optional: false
+{{- else }}
+          env: 
+            - name: TLS_CERT
+              valueFrom: 
+                configMapKeyRef:
+                  name: {{ include "flt-gw.fullname" . }}-configmap
+                  key: TLS_CERT
+                  optional: false 
+            - name: TLS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "flt-gw.fullname" . }}-configmap
+                  key: TLS_KEY
+                  optional: false
+{{- end }}
           ports:
             - name: https
-              containerPort: 80
+              containerPort: 443
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: tls
-          secret: 
-            secretName: tls-secret-name
         - name: config-map-volume
           configMap:
             name: {{ include "flt-gw.name" . }}-configmap

@@ -97,42 +97,31 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-# Set for flt-gw app liveness route 
-livenessProbe:
-  path: / 
 
-# Set for flt-gw app liveness route 
-readinessProbe:
-  path: /
+# Specify for production 
+# secret needed from type TLS 
 
-# - key: username     # value: maor
-# - key: password     # value: test
 
-volumes:
-  env:
-    secretName: ""
-  configMap:
-    configMapName: ""
+tlsSecretEnable: false
+# tlsSecretName: tls-secret
 
-tlsConfig: 
-  certsPath: /mnt/tls   
 
-envFromSecret: "some-secret"
 
 # ------- DEVELOPERS-SECTION ------------
 
 envSecrets:
-  - key: EXAMPLE_ENV
-    value: "enter-value"
+  - key: KAFKA_URL
+    value: "https://example.com"
 
 configMap:
-  path: "/etc/config"
+  path: /etc/config
   list: 
-    - key: "property"
-      value: "property-value"
-  configFile: 
-    create: true
-    name: "file-name"
-    data:
-      - key: "key"
-        value: "val"
+    - key: "name"
+      value: "content" 
+  files: 
+    - name: "TLS_CERT"
+      data: | 
+        ---- CERT ----
+    - name: "TLS_KEY"
+      data: | 
+        ---- KEY ----

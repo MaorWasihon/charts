@@ -3,10 +3,12 @@ kind: ConfigMap
 metadata: 
   name: {{ include "flt-gw.fullname" . }}-configmap
 data: 
-  {{- if .Values.configMap.configFile.create }}
-    {{- .Values.configMap.configFile.name | nindent 2 }}: |
-    {{ .Values.configMap.configFile.data }}
+{{- if not .Values.tlsSecretEnable  }}
+  {{- range .Values.configMap.files }}
+    {{- .name | nindent 2 }}: |
+    {{- .data | nindent 4 }}
   {{- end }}
-  {{- range .Values.configMap.list}}
+{{- end }}
+  {{- range .Values.configMap.list -}}
   {{- .key | nindent 2 }}: {{ .value | quote }}
   {{- end}}
