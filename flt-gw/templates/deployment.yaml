@@ -34,9 +34,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: tls
-              mounthPath: {{ .Values.tlsConfig.certsPath }}
-              readOnly: true 
+            # - name: tls
+            #   mounthPath: {{ .Values.tlsConfig.certsPath }}
+            #   readOnly: true 
             - name: config-map-volume
               mounthPath: {{ .Values.configMap.path }}
               readOnly: true
@@ -58,9 +58,9 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-        - name: tls
-          secret: 
-            secretName: tls-secret-name
+        # - name: tls
+        #   secret: 
+        #     secretName: tls-secret-name
         - name: config-map-volume
           configMap:
             name: {{ include "flt-gw.name" . }}-configmap
