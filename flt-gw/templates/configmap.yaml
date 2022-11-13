@@ -5,9 +5,7 @@ metadata:
 data: 
   {{- if .Values.configMap.configFile.create }}
     {{- .Values.configMap.configFile.name | nindent 2 }}: |
-    {{- range .Values.configMap.configFile.data }}
-      {{- .key | nindent 4}}={{ .value }}
-    {{- end}}
+    {{ .Values.configMap.configFile.data }}
   {{- end }}
   {{- range .Values.configMap.list}}
   {{- .key | nindent 2 }}: {{ .value | quote }}
