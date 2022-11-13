@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: {{ include "flt-gw.fullname" . }}-configmap
+data: 
+  {{- if .Values.configMap.configFile.create }}
+    {{- .Values.configMap.configFile.name | nindent 2 }}: |
+    {{- range .Values.configMap.configFile.data }}
+      {{- .key | nindent 4}}={{ .value }}
+    {{- end}}
+  {{- end }}
+  {{- range .Values.configMap.list}}
+  {{- .key | nindent 2 }}: {{ .value | quote }}
+  {{- end}}

@@ -1,0 +1,138 @@
+# Number of app replicas 
+# The amount of pods apearences  
+replicaCount: 1
+
+
+# Set the flt-gw app image and tag 
+# Avalibale values for pullPolicy : 
+#  - Never , Always , IfNotPresent
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+
+# Service account details  
+# if create = true 
+# will create service account 
+serviceAccount:
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+
+# Specify Service details 
+service:
+  type: ClusterIP
+  port: 80
+
+
+# Create ingress for flt-gw app 
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+# create secret in namespace where your app will deploy 
+# tls secret with certificate for your host      
+  tls: []
+  #  - secretName: <secret-name>
+  #    hosts:
+  #      - chart-example.local
+
+
+
+# If enabled the app will add replicas atuomaticly 
+#   until target CPU/Memory will be under the target value
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Add nodeSelectors for running the app over specific nodes 
+# in your k8s cluster
+# example: 
+# nodeSelector:
+#    label_key : label_value
+nodeSelector: {}
+
+# Add tolerations for allowing this app 
+# to run over specific nodes 
+tolerations: []
+
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+
+affinity: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# Set for flt-gw app liveness route 
+livenessProbe:
+  path: / 
+
+# Set for flt-gw app liveness route 
+readinessProbe:
+  path: /
+
+# - key: username     # value: maor
+# - key: password     # value: test
+
+volumes:
+  env:
+    secretName: ""
+  configMap:
+    configMapName: ""
+
+tlsConfig: 
+  certsPath: /mnt/tls   
+
+envFromSecret: "some-secret"
+
+# ------- DEVELOPERS-SECTION ------------
+
+envSecrets:
+  - key: EXAMPLE_ENV
+    value: "enter-value"
+
+configMap:
+  path: "/etc/config"
+  list: 
+    - key: "property"
+      value: "property-value"
+  configFile: 
+    create: true
+    name: "file-name"
+    data:
+      - key: "key"
+        value: "val"
